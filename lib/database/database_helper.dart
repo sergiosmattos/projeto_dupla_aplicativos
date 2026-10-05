@@ -27,18 +27,24 @@ class DatabaseHelper {
   Future _createDb(Database db, int version) async {
     await db.execute('''
     CREATE TABLE lists_product
-    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    description TEXT NOT NULL)''');
+    description TEXT NOT NULL
+    )''');
+
     await db.execute('''
     CREATE TABLE products
-    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     amount INTEGER NOT NULL,
     price REAL NOT NULL,
     buyed INTEGER NOT NULL,
-    validade TEXT NOT NULL),
-    FOREIGN KEY (lists_product_id) REFERENCES lists_product(id) ON DELETE CASCADE)
+    validade TEXT NOT NULL,
+    lists_product_id INTEGER,
+    FOREIGN KEY (lists_product_id) REFERENCES lists_product(id) ON DELETE CASCADE
+    )
     ''');
   }
 
