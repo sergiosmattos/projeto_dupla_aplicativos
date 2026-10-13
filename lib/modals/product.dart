@@ -5,7 +5,7 @@ class Product {
   double price;
   bool buyed;
   DateTime validade;
-  int? listProductId;
+  int? listsProductId;
 
   Product({
     this.id,
@@ -15,7 +15,7 @@ class Product {
     this.buyed = false,
     required this.validade,
     //required
-    this.listProductId,
+    this.listsProductId,
   });
 
   void buy() {
@@ -29,7 +29,7 @@ class Product {
     price: json['price'],
     buyed: json['buyed'] == 0 ? false : true,
     validade: DateTime.parse(json['validade']),
-    listProductId: json['list_product_id'],
+    listsProductId: json['lists_product_id'],
   );
 
   Map<String, dynamic> toMap() => {
@@ -39,6 +39,6 @@ class Product {
     'price': price,
     'buyed': buyed ? 1 : 0,
     'validade': validade.toIso8601String(),
-    'list_product_id': listProductId,
+    'lists_product_id': listsProductId,
   };
 }

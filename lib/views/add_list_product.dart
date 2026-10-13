@@ -122,7 +122,7 @@ class _AddListProductState extends State<AddListProduct> {
                         } else {
                           widget.listProduct!.name = _listProductName.text;
                           widget.listProduct!.description =
-                              _listProductName.text;
+                              _listprodutoDescription.text;
 
                           await listProductdao.update(widget.listProduct!);
                         }

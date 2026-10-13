@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_aula11_turma_b/modals/list_product.dart';
 import 'package:projeto_aula11_turma_b/views/add_list_product.dart';
-import 'package:projeto_aula11_turma_b/views/add_product.dart';
+import 'package:projeto_aula11_turma_b/views/products_screen.dart';
 
 class ListProductItem extends StatefulWidget {
   final ListProduct listProduct;
@@ -33,7 +33,10 @@ class _ListProductItemState extends State<ListProductItem> {
         onTap: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddProduct()),
+            MaterialPageRoute(
+              builder: (context) =>
+                  ProductsScreen(listProduct: widget.listProduct),
+            ),
           );
           setState(() {});
         },

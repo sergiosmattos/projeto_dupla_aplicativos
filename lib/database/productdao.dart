@@ -37,4 +37,19 @@ class Productdao {
       whereArgs: [product.id],
     );
   }
+
+  // filtrar
+  Future<List<Product>> filter({int? listId}) async {
+    Database db = await DatabaseHelper.instance.database;
+    var products = await db.query(
+      'products',
+      where: listId != null ? 'lists_product_id = ?' : null,
+      whereArgs: listId != null ? [listId] : null,
+      orderBy: 'id DESC',
+    );
+    List<Product> productList = products.isNotEmpty
+        ? products.map((item) => Product.fromMap(item)).toList()
+        : [];
+    return productList;
+  }
 }
