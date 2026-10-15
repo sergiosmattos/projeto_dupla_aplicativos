@@ -4,8 +4,9 @@ import 'package:projeto_aula11_turma_b/modals/product.dart';
 
 class AddProduct extends StatefulWidget {
   final Product? product;
+  final int? listId;
 
-  const AddProduct({super.key, this.product});
+  const AddProduct({super.key, this.product, this.listId});
 
   @override
   State<AddProduct> createState() => _AddProductState();
@@ -183,6 +184,7 @@ class _AddProductState extends State<AddProduct> {
                             amount: amount,
                             price: price,
                             validade: _produtoValidade,
+                            listsProductId: widget.listId,
                           );
 
                           int id = await productdao.add(produto);

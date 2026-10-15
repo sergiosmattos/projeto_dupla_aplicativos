@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_aula11_turma_b/database/list_productdao.dart';
 import 'package:projeto_aula11_turma_b/database/productdao.dart';
-import 'package:projeto_aula11_turma_b/modals/product.dart';
+import 'package:projeto_aula11_turma_b/modals/list_product.dart';
 import 'package:projeto_aula11_turma_b/views/add_list_product.dart';
-import 'package:projeto_aula11_turma_b/views/product_item.dart';
+import 'package:projeto_aula11_turma_b/views/list_product_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,10 +14,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Productdao productdao = Productdao();
+  ListProductdao listProductdao = ListProductdao();
 
-  void deleteProduct(Product product) {
+  void deleteListProduct(ListProduct listProduct) {
     setState(() {
-      productdao.remove(product);
+      listProductdao.remove(listProduct);
     });
   }
 
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage> {
       ),
 
       body: FutureBuilder(
-        future: productdao.getProduct(),
+        future: listProductdao.getListProduct(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!.isEmpty
@@ -53,10 +55,10 @@ class _HomePageState extends State<HomePage> {
                 : ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      Product currentProduct = snapshot.data![index];
-                      return ProductItem(
-                        product: currentProduct,
-                        deleteItem: () => deleteProduct(currentProduct),
+                      ListProduct currentListProduct = snapshot.data![index];
+                      return ListProductItem(
+                        listProduct: currentListProduct,
+                        deleteItem: () => deleteListProduct(currentListProduct),
                       );
                     },
                   );
