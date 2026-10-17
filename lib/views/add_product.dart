@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_aula11_turma_b/database/productdao.dart';
-import 'package:projeto_aula11_turma_b/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/database/productdao.dart';
+import 'package:projeto_dupla_aplicativos/modals/product.dart';
 
 class AddProduct extends StatefulWidget {
   final Product? product;

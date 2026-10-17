@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_aula11_turma_b/database/productdao.dart';
-import 'package:projeto_aula11_turma_b/modals/product.dart';
-import 'package:projeto_aula11_turma_b/views/add_product.dart';
+import 'package:projeto_dupla_aplicativos/database/productdao.dart';
+import 'package:projeto_dupla_aplicativos/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/views/add_product.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;

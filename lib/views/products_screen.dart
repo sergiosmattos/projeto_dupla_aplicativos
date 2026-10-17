@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_aula11_turma_b/database/productdao.dart';
-import 'package:projeto_aula11_turma_b/modals/list_product.dart';
-import 'package:projeto_aula11_turma_b/modals/product.dart';
-import 'package:projeto_aula11_turma_b/views/add_product.dart';
-import 'package:projeto_aula11_turma_b/views/product_item.dart';
+import 'package:projeto_dupla_aplicativos/database/productdao.dart';
+import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/views/add_product.dart';
+import 'package:projeto_dupla_aplicativos/views/product_item.dart';
 
 class ProductsScreen extends StatefulWidget {
   final ListProduct listProduct;
@@ -21,7 +21,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.listProduct.name,
+          "Visualizando produtos",
           style: TextStyle(
             color: Theme.of(context).colorScheme.primaryContainer,
           ),
@@ -31,29 +31,65 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: FutureBuilder<List<Product>>(
-        future: productdao.filter(listId: widget.listProduct.id),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhum produto nesta lista'));
-          }
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              Product product = snapshot.data![index];
-              return ProductItem(
-                product: product,
-                deleteItem: () async {
-                  await productdao.remove(product);
-                  setState(() {});
-                },
-              );
-            },
-          );
-        },
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Text(
+                    widget.listProduct.name,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Text(
+                    widget.listProduct.description,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<Product>>(
+              future: productdao.filter(listId: widget.listProduct.id),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('Nenhum produto nesta lista'),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    Product product = snapshot.data![index];
+                    return ProductItem(
+                      product: product,
+                      deleteItem: () async {
+                        await productdao.remove(product);
+                        setState(() {});
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

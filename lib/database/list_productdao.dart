@@ -1,16 +1,21 @@
-import 'package:projeto_aula11_turma_b/database/database_helper.dart';
-import 'package:projeto_aula11_turma_b/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/database/database_helper.dart';
+import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ListProductdao {
   ListProductdao();
 
   //read
-  Future<List<ListProduct>> getListProduct() async {
+  Future<List<ListProduct>> getListProduct({required int userId}) async {
     Database db = await DatabaseHelper.instance.database;
-    var listproducts = await db.query('lists_product', orderBy: 'id DESC');
-    List<ListProduct> listProductList = listproducts.isNotEmpty
-        ? listproducts.map((item) => ListProduct.fromMap(item)).toList()
+    var lists = await db.query(
+      'lists_product',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'id DESC',
+    );
+    List<ListProduct> listProductList = lists.isNotEmpty
+        ? lists.map((item) => ListProduct.fromMap(item)).toList()
         : [];
     return listProductList;
   }

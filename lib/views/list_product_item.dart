@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_aula11_turma_b/modals/list_product.dart';
-import 'package:projeto_aula11_turma_b/views/add_list_product.dart';
-import 'package:projeto_aula11_turma_b/views/products_screen.dart';
+import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/views/add_list_product.dart';
+import 'package:projeto_dupla_aplicativos/views/products_screen.dart';
 
 class ListProductItem extends StatefulWidget {
   final ListProduct listProduct;
@@ -53,11 +53,17 @@ class _ListProductItemState extends State<ListProductItem> {
                 );
                 setState(() {});
               },
-              icon: const Icon(Icons.edit),
+              icon: Icon(
+                Icons.edit,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             IconButton(
               onPressed: widget.deleteItem,
-              icon: const Icon(Icons.delete),
+              icon: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ],
         ),

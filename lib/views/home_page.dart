@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_aula11_turma_b/database/list_productdao.dart';
-import 'package:projeto_aula11_turma_b/database/productdao.dart';
-import 'package:projeto_aula11_turma_b/modals/list_product.dart';
-import 'package:projeto_aula11_turma_b/views/add_list_product.dart';
-import 'package:projeto_aula11_turma_b/views/list_product_item.dart';
+import 'package:projeto_dupla_aplicativos/database/list_productdao.dart';
+import 'package:projeto_dupla_aplicativos/database/productdao.dart';
+import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/modals/user.dart';
+import 'package:projeto_dupla_aplicativos/views/add_list_product.dart';
+import 'package:projeto_dupla_aplicativos/views/list_product_item.dart';
+import 'package:projeto_dupla_aplicativos/views/user_drawer.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final User user;
+  const HomePage({super.key, required this.user});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -16,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   Productdao productdao = Productdao();
   ListProductdao listProductdao = ListProductdao();
 
+  // apaga a sessão salva e volta para a entrada, apagando TODAS as telas anteriores
   void deleteListProduct(ListProduct listProduct) {
     setState(() {
       listProductdao.remove(listProduct);
@@ -33,13 +37,24 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(
+              Icons.menu,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
       ),
-
+      drawer: UserDrawer(user: widget.user),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddListProduct()),
+            MaterialPageRoute(
+              builder: (context) => AddListProduct(userId: widget.user.id),
+            ),
           );
           setState(() {});
         },
@@ -47,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       ),
 
       body: FutureBuilder(
-        future: listProductdao.getListProduct(),
+        future: listProductdao.getListProduct(userId: widget.user.id!),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!.isEmpty
