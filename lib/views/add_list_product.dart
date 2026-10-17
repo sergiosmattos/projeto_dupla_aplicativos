@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_aula11_turma_b/database/list_productdao.dart';
-import 'package:projeto_aula11_turma_b/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/database/list_productdao.dart';
+import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
 
 class AddListProduct extends StatefulWidget {
   final ListProduct? listProduct;
-  const AddListProduct({super.key, this.listProduct});
+  final int? userId;
+  const AddListProduct({super.key, this.listProduct, this.userId});
 
   @override
   State<AddListProduct> createState() => _AddListProductState();
@@ -115,6 +116,7 @@ class _AddListProductState extends State<AddListProduct> {
                             id: widget.listProduct?.id,
                             name: _listProductName.text,
                             description: _listprodutoDescription.text,
+                            userId: widget.userId,
                           );
 
                           int id = await listProductdao.add(lista);

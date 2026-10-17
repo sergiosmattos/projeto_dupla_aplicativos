@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_aula11_turma_b/views/home_page.dart';
+import 'package:projeto_dupla_aplicativos/views/start.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: Colors.pink.shade100,
       ),
-      home: const HomePage(),
+      home: const Start(),
     );
   }
 }

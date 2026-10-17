@@ -1,4 +1,4 @@
-name: projeto_aula11_turma_b
+name: projeto_dupla_aplicativos
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -37,6 +37,8 @@ dependencies:
   sqflite: ^2.4.2+1
   path: ^1.9.1
   path_provider: ^2.1.6
+  crypto: ^3.0.7
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:

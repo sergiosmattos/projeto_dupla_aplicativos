@@ -1,5 +1,5 @@
-import 'package:projeto_aula11_turma_b/database/database_helper.dart';
-import 'package:projeto_aula11_turma_b/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/database/database_helper.dart';
+import 'package:projeto_dupla_aplicativos/modals/product.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Productdao {
