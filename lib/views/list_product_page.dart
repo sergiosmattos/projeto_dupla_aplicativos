@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_dupla_aplicativos/database/productdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
-import 'package:projeto_dupla_aplicativos/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/database/product_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/list_product.dart';
+import 'package:projeto_dupla_aplicativos/models/product.dart';
 import 'package:projeto_dupla_aplicativos/views/add_product.dart';
 import 'package:projeto_dupla_aplicativos/views/product_item.dart';
 
-class ProductsScreen extends StatefulWidget {
+class ListPage extends StatefulWidget {
   final ListProduct listProduct;
-  const ProductsScreen({super.key, required this.listProduct});
+  const ListPage({super.key, required this.listProduct});
 
   @override
-  State<ProductsScreen> createState() => _ProductsScreenState();
+  State<ListPage> createState() => _ListPageState();
 }
 
-class _ProductsScreenState extends State<ProductsScreen> {
-  Productdao productdao = Productdao();
+class _ListPageState extends State<ListPage> {
+  ProductDao productdao = ProductDao();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Product>>(
+            child: FutureBuilder(
               future: productdao.filter(listId: widget.listProduct.id),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {

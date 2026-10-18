@@ -3,12 +3,15 @@ class User {
   String name;
   String email;
   String passwordHash;
+  String? profileImage;
+  static const String defaultUnknownImage = "unknown_image.jpg";
 
   User({
     this.id,
     required this.name,
     required this.email,
     required this.passwordHash,
+    required this.profileImage,
   });
 
   factory User.fromMap(Map<String, dynamic> json) => User(
@@ -16,6 +19,7 @@ class User {
     name: json['name'],
     email: json['email'],
     passwordHash: json['password_hash'],
+    profileImage: json['profile_image'],
   );
 
   Map<String, dynamic> toMap() => {
@@ -23,5 +27,6 @@ class User {
     'name': name,
     'email': email,
     'password_hash': passwordHash,
+    'profile_image': profileImage,
   };
 }

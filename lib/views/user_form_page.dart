@@ -1,66 +1,79 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:projeto_dupla_aplicativos/database/session.dart';
-import 'package:projeto_dupla_aplicativos/database/userdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/user.dart';
+import 'package:projeto_dupla_aplicativos/database/user_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/user.dart';
+import 'package:projeto_dupla_aplicativos/views/form_fields/image_form_field.dart';
 import 'package:projeto_dupla_aplicativos/views/home_page.dart';
 
-class Auth extends StatefulWidget {
-  final User? user;
-  final bool cadastro;
-  const Auth({super.key, this.user, this.cadastro = false});
+class UserFormPage extends StatefulWidget {
+  final User? _user;
+  final bool _cadastro;
+  const UserFormPage({super.key, User? user, bool cadastro = false})
+    : _cadastro = cadastro,
+      _user = user;
 
   @override
-  State<Auth> createState() => _AuthState();
+  State<UserFormPage> createState() => _UserFormPageState();
 }
 
-class _AuthState extends State<Auth> {
+class _UserFormPageState extends State<UserFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nome = TextEditingController();
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _senha = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+  XFile? _selectedImage;
+
   UserDao userDao = UserDao();
 
   @override
   void initState() {
     super.initState();
-    if (widget.user != null) {
-      _nome.text = widget.user!.name;
-      _email.text = widget.user!.email;
+    if (widget._user != null) {
+      _nomeController.text = widget._user!.name;
+      _emailController.text = widget._user!.email;
+
+      String? userProfileImage = widget._user!.profileImage;
+
+      if (userProfileImage != null) {
+        _selectedImage = XFile(userProfileImage);
+      }
     }
   }
 
   @override
   void dispose() {
-    _nome.dispose();
-    _email.dispose();
-    _senha.dispose();
+    _nomeController.dispose();
+    _emailController.dispose();
+    _senhaController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.user == null
-              ? (widget.cadastro ? "Cadastro" : "Entrada")
+          widget._user == null
+              ? (widget._cadastro ? "Cadastro" : "Entrada")
               : "Alterando o usuário",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
+          style: TextStyle(color: colorScheme.primaryContainer),
         ),
-        leading: widget.user == null
+        leading: widget._user == null
             ? null
             : IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
+                icon: Icon(Icons.close, color: colorScheme.primaryContainer),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: colorScheme.primary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -70,9 +83,9 @@ class _AuthState extends State<Auth> {
               key: _formKey,
               child: Column(
                 children: [
-                  if (widget.user != null || widget.cadastro)
+                  if (widget._user != null || widget._cadastro)
                     TextFormField(
-                      controller: _nome,
+                      controller: _nomeController,
                       decoration: const InputDecoration(labelText: 'Nome'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -82,7 +95,7 @@ class _AuthState extends State<Auth> {
                       },
                     ),
                   TextFormField(
-                    controller: _email,
+                    controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(labelText: 'E-mail'),
                     validator: (value) {
@@ -93,44 +106,81 @@ class _AuthState extends State<Auth> {
                     },
                   ),
                   TextFormField(
-                    controller: _senha,
+                    controller: _senhaController,
                     obscureText: true,
                     decoration: InputDecoration(
-                      labelText: widget.user == null
+                      labelText: widget._user == null
                           ? 'Senha'
                           : 'Nova senha (deixe em branco para manter)',
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         // só é obrigatória na entrada e no cadastro
-                        return widget.user == null ? 'Entre com a senha' : null;
+                        return widget._user == null
+                            ? 'Entre com a senha'
+                            : null;
                       }
-                      if ((widget.user != null || widget.cadastro) &&
+                      if ((widget._user != null || widget._cadastro) &&
                           value.length < 6) {
                         return 'A senha precisa ter pelo menos 6 caracteres';
                       }
                       return null;
                     },
                   ),
+                  Visibility(
+                    visible: (widget._user != null),
+                    child: ImageFormfield(
+                      fallback: Image.asset(
+                        "assets/images/${User.defaultUnknownImage}",
+                      ),
+                      imageHolder: _selectedImage,
+                      validator: (value) => null,
+                      onTap: (pickedImage) {
+                        setState(() {
+                          _selectedImage = pickedImage;
+                        });
+                      },
+                    ),
+                  ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: colorScheme.primary,
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        if (widget.user == null) {
+                        String? savedPath;
+
+                        if (_selectedImage != null) {
+                          print("tem Imagem");
+                          Directory documentDir =
+                              await getApplicationDocumentsDirectory();
+
+                          String savedPath = join(
+                            documentDir.path,
+                            _selectedImage!.name,
+                          );
+
+                          _selectedImage!.saveTo(savedPath);
+
+                          print(savedPath);
+                        }
+
+                        print(savedPath);
+
+                        if (widget._user == null) {
                           // entrada ou cadastro
                           User? user;
-                          if (widget.cadastro) {
+                          if (widget._cadastro) {
                             user = await userDao.create(
-                              _nome.text,
-                              _email.text,
-                              _senha.text,
+                              _nomeController.text,
+                              _emailController.text,
+                              _senhaController.text,
+                              savedPath,
                             );
                           } else {
                             user = await userDao.login(
-                              _email.text,
-                              _senha.text,
+                              _emailController.text,
+                              _senhaController.text,
                             );
                           }
 
@@ -142,7 +192,7 @@ class _AuthState extends State<Auth> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  widget.cadastro
+                                  widget._cadastro
                                       ? "Esse e-mail já está cadastrado"
                                       : "E-mail ou senha incorretos",
                                 ),
@@ -166,11 +216,21 @@ class _AuthState extends State<Auth> {
                           );
                         } else {
                           // alterando o usuário
+
+                          print(savedPath);
+
                           bool salvou = await userDao.update(
-                            widget.user!,
-                            _nome.text,
-                            _email.text,
-                            _senha.text,
+                            widget._user!,
+                            _nomeController.text,
+                            _emailController.text,
+                            _senhaController.text,
+                            savedPath,
+                          );
+
+                          print(
+                            (widget._user!.profileImage == null)
+                                ? "Nenhuma Imagem"
+                                : widget._user!.profileImage!,
                           );
 
                           if (!context.mounted) {
@@ -194,15 +254,13 @@ class _AuthState extends State<Auth> {
                       }
                     },
                     child: Text(
-                      widget.user == null
-                          ? (widget.cadastro ? "cadastrar" : "entrar")
+                      widget._user == null
+                          ? (widget._cadastro ? "cadastrar" : "entrar")
                           : "salvar",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                      ),
+                      style: TextStyle(color: colorScheme.primaryContainer),
                     ),
                   ),
-                  if (widget.user == null)
+                  if (widget._user == null)
                     TextButton(
                       onPressed: () {
                         // abre a mesma tela no outro modo
@@ -210,12 +268,12 @@ class _AuthState extends State<Auth> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                Auth(cadastro: !widget.cadastro),
+                                UserFormPage(cadastro: !widget._cadastro),
                           ),
                         );
                       },
                       child: Text(
-                        widget.cadastro ? "Já tenho conta" : "Fazer cadastro",
+                        widget._cadastro ? "Já tenho conta" : "Fazer cadastro",
                       ),
                     ),
                 ],

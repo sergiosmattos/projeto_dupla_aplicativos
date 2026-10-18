@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:projeto_dupla_aplicativos/database/session.dart';
-import 'package:projeto_dupla_aplicativos/database/userdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/user.dart';
-import 'package:projeto_dupla_aplicativos/views/auth.dart';
+import 'package:projeto_dupla_aplicativos/database/user_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/user.dart';
+import 'package:projeto_dupla_aplicativos/views/user_form_page.dart';
 
 class UserDrawer extends StatelessWidget {
   final User user;
@@ -14,7 +16,7 @@ class UserDrawer extends StatelessWidget {
   Future<void> _sair(NavigatorState navigator) async {
     await Session.clear();
     navigator.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const Auth()),
+      MaterialPageRoute(builder: (context) => const UserFormPage()),
       (route) => false,
     );
   }
@@ -66,7 +68,9 @@ class UserDrawer extends StatelessWidget {
             accountName: Text(user.name),
             accountEmail: Text(user.email),
             currentAccountPicture: CircleAvatar(
-              child: Text(user.name[0].toUpperCase()),
+              child: (user.profileImage == null)
+                  ? Text(user.name[0].toUpperCase())
+                  : Image.file(File(user.profileImage!)),
             ),
           ),
           ListTile(
@@ -79,7 +83,9 @@ class UserDrawer extends StatelessWidget {
               final navigator = Navigator.of(context);
               navigator.pop(); // fecha o drawer
               navigator.push(
-                MaterialPageRoute(builder: (context) => Auth(user: user)),
+                MaterialPageRoute(
+                  builder: (context) => UserFormPage(user: user),
+                ),
               );
             },
           ),

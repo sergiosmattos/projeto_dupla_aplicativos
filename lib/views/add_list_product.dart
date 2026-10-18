@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_dupla_aplicativos/database/list_productdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/database/list_product_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/list_product.dart';
 
 class AddListProduct extends StatefulWidget {
   final ListProduct? listProduct;
@@ -13,53 +13,48 @@ class AddListProduct extends StatefulWidget {
 
 class _AddListProductState extends State<AddListProduct> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _listProductName = TextEditingController();
-  final TextEditingController _listprodutoDescription = TextEditingController();
-  ListProductdao listProductdao = ListProductdao();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  ListProductDao listProductdao = ListProductDao();
 
   @override
   void initState() {
     super.initState();
     if (widget.listProduct != null) {
-      _listProductName.text = widget.listProduct!.name;
-      _listprodutoDescription.text = widget.listProduct!.description;
+      _nameController.text = widget.listProduct!.name;
+      _descriptionController.text = widget.listProduct!.description;
     }
   }
 
   @override
   void dispose() {
-    _listProductName.dispose();
-    _listprodutoDescription.dispose();
+    _nameController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: widget.listProduct == null
             ? Text(
                 "Nova lista",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
+                style: TextStyle(color: colorScheme.primaryContainer),
               )
             : Text(
                 'Alterando a lista',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
+                style: TextStyle(color: colorScheme.primaryContainer),
               ),
         leading: IconButton(
-          icon: Icon(
-            Icons.close,
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
+          icon: Icon(Icons.close, color: colorScheme.primaryContainer),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: colorScheme.primary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -70,7 +65,7 @@ class _AddListProductState extends State<AddListProduct> {
               child: Column(
                 children: [
                   TextFormField(
-                    controller: _listProductName,
+                    controller: _nameController,
                     decoration: const InputDecoration(
                       label: Text.rich(
                         TextSpan(
@@ -88,7 +83,7 @@ class _AddListProductState extends State<AddListProduct> {
                     },
                   ),
                   TextFormField(
-                    controller: _listprodutoDescription,
+                    controller: _descriptionController,
                     decoration: const InputDecoration(
                       label: Text.rich(
                         TextSpan(
@@ -107,24 +102,24 @@ class _AddListProductState extends State<AddListProduct> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: colorScheme.primary,
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (widget.listProduct == null) {
                           ListProduct lista = ListProduct(
                             id: widget.listProduct?.id,
-                            name: _listProductName.text,
-                            description: _listprodutoDescription.text,
+                            name: _nameController.text,
+                            description: _descriptionController.text,
                             userId: widget.userId,
                           );
 
                           int id = await listProductdao.add(lista);
                           lista.id = id;
                         } else {
-                          widget.listProduct!.name = _listProductName.text;
+                          widget.listProduct!.name = _nameController.text;
                           widget.listProduct!.description =
-                              _listprodutoDescription.text;
+                              _descriptionController.text;
 
                           await listProductdao.update(widget.listProduct!);
                         }
@@ -141,9 +136,7 @@ class _AddListProductState extends State<AddListProduct> {
                     },
                     child: Text(
                       "salvar lista",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                      ),
+                      style: TextStyle(color: colorScheme.primaryContainer),
                     ),
                   ),
                 ],

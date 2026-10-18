@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_dupla_aplicativos/database/productdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/database/product_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/product.dart';
 import 'package:projeto_dupla_aplicativos/views/add_product.dart';
 
 class ProductItem extends StatefulWidget {
@@ -17,7 +17,7 @@ class ProductItem extends StatefulWidget {
 }
 
 class _ProductItemState extends State<ProductItem> {
-  Productdao productdao = Productdao();
+  ProductDao productdao = ProductDao();
 
   @override
   Widget build(BuildContext context) {

@@ -1,12 +1,12 @@
 import 'package:projeto_dupla_aplicativos/database/database_helper.dart';
-import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/models/list_product.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ListProductdao {
-  ListProductdao();
+class ListProductDao {
+  ListProductDao();
 
   //read
-  Future<List<ListProduct>> getListProduct({required int userId}) async {
+  Future<List<ListProduct>> getListProduct(int userId) async {
     Database db = await DatabaseHelper.instance.database;
     var lists = await db.query(
       'lists_product',
