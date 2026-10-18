@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
+import 'package:projeto_dupla_aplicativos/models/list_product.dart';
 import 'package:projeto_dupla_aplicativos/views/add_list_product.dart';
-import 'package:projeto_dupla_aplicativos/views/products_screen.dart';
+import 'package:projeto_dupla_aplicativos/views/list_product_page.dart';
 
 class ListProductItem extends StatefulWidget {
   final ListProduct listProduct;
@@ -34,8 +34,7 @@ class _ListProductItemState extends State<ListProductItem> {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  ProductsScreen(listProduct: widget.listProduct),
+              builder: (context) => ListPage(listProduct: widget.listProduct),
             ),
           );
           setState(() {});

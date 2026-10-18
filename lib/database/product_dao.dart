@@ -1,9 +1,9 @@
 import 'package:projeto_dupla_aplicativos/database/database_helper.dart';
-import 'package:projeto_dupla_aplicativos/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/models/product.dart';
 import 'package:sqflite/sqflite.dart';
 
-class Productdao {
-  Productdao();
+class ProductDao {
+  ProductDao();
 
   // read
   Future<List<Product>> getProduct() async {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_dupla_aplicativos/database/list_productdao.dart';
-import 'package:projeto_dupla_aplicativos/database/productdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/list_product.dart';
-import 'package:projeto_dupla_aplicativos/modals/user.dart';
+import 'package:projeto_dupla_aplicativos/database/list_product_dao.dart';
+import 'package:projeto_dupla_aplicativos/database/product_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/list_product.dart';
+import 'package:projeto_dupla_aplicativos/models/user.dart';
 import 'package:projeto_dupla_aplicativos/views/add_list_product.dart';
 import 'package:projeto_dupla_aplicativos/views/list_product_item.dart';
 import 'package:projeto_dupla_aplicativos/views/user_drawer.dart';
@@ -16,13 +16,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Productdao productdao = Productdao();
-  ListProductdao listProductdao = ListProductdao();
+  ProductDao productdao = ProductDao();
+  ListProductDao listProductDao = ListProductDao();
 
   // apaga a sessão salva e volta para a entrada, apagando TODAS as telas anteriores
   void deleteListProduct(ListProduct listProduct) {
     setState(() {
-      listProductdao.remove(listProduct);
+      listProductDao.remove(listProduct);
     });
   }
 
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       ),
 
       body: FutureBuilder(
-        future: listProductdao.getListProduct(userId: widget.user.id!),
+        future: listProductDao.getListProduct(widget.user.id!),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!.isEmpty

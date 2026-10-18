@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_dupla_aplicativos/database/productdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/product.dart';
+import 'package:projeto_dupla_aplicativos/database/product_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/product.dart';
 
 class AddProduct extends StatefulWidget {
   final Product? product;
@@ -14,31 +14,30 @@ class AddProduct extends StatefulWidget {
 
 class _AddProductState extends State<AddProduct> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _produtoName = TextEditingController();
-  final TextEditingController _produtoAmount = TextEditingController();
-  final TextEditingController _produtoPrice = TextEditingController();
-  final TextEditingController _produtoValidadeController =
-      TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _validadeController = TextEditingController();
   DateTime _produtoValidade = DateTime.now();
-  Productdao productdao = Productdao();
+  ProductDao productdao = ProductDao();
   @override
   void initState() {
     super.initState();
     if (widget.product != null) {
-      _produtoName.text = widget.product!.name;
-      _produtoAmount.text = widget.product!.amount.toString();
-      _produtoPrice.text = widget.product!.price.toString();
+      _nameController.text = widget.product!.name;
+      _amountController.text = widget.product!.amount.toString();
+      _priceController.text = widget.product!.price.toString();
       _produtoValidade = widget.product!.validade;
     }
-    _produtoValidadeController.text = _formatarData(_produtoValidade);
+    _validadeController.text = _formatarData(_produtoValidade);
   }
 
   @override
   void dispose() {
-    _produtoName.dispose();
-    _produtoAmount.dispose();
-    _produtoPrice.dispose();
-    _produtoValidadeController.dispose();
+    _nameController.dispose();
+    _amountController.dispose();
+    _priceController.dispose();
+    _validadeController.dispose();
     super.dispose();
   }
 
@@ -47,31 +46,26 @@ class _AddProductState extends State<AddProduct> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: widget.product == null
             ? Text(
                 "Novo produto",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
+                style: TextStyle(color: colorScheme.primaryContainer),
               )
             : Text(
                 'Alterando o produto',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                ),
+                style: TextStyle(color: colorScheme.primaryContainer),
               ),
         leading: IconButton(
-          icon: Icon(
-            Icons.close,
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
+          icon: Icon(Icons.close, color: colorScheme.primaryContainer),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: colorScheme.primary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -82,7 +76,7 @@ class _AddProductState extends State<AddProduct> {
               child: Column(
                 children: [
                   TextFormField(
-                    controller: _produtoName,
+                    controller: _nameController,
                     decoration: const InputDecoration(
                       label: Text.rich(
                         TextSpan(
@@ -100,7 +94,7 @@ class _AddProductState extends State<AddProduct> {
                     },
                   ),
                   TextFormField(
-                    controller: _produtoAmount,
+                    controller: _amountController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       label: Text.rich(
@@ -122,7 +116,7 @@ class _AddProductState extends State<AddProduct> {
                     },
                   ),
                   TextFormField(
-                    controller: _produtoPrice,
+                    controller: _priceController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -145,9 +139,8 @@ class _AddProductState extends State<AddProduct> {
                       return null;
                     },
                   ),
-
                   TextFormField(
-                    controller: _produtoValidadeController,
+                    controller: _validadeController,
                     readOnly: true,
                     decoration: const InputDecoration(labelText: 'Validade'),
                     onTap: () async {
@@ -160,9 +153,7 @@ class _AddProductState extends State<AddProduct> {
                       if (escolhida != null) {
                         setState(() {
                           _produtoValidade = escolhida;
-                          _produtoValidadeController.text = _formatarData(
-                            escolhida,
-                          );
+                          _validadeController.text = _formatarData(escolhida);
                         });
                       }
                     },
@@ -170,17 +161,19 @@ class _AddProductState extends State<AddProduct> {
 
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: colorScheme.primary,
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        final int amount = int.parse(_produtoAmount.text);
-                        final double price = double.parse(_produtoPrice.text);
+                        final int amount = int.parse(_amountController.text);
+                        final double price = double.parse(
+                          _priceController.text,
+                        );
 
                         if (widget.product == null) {
                           Product produto = Product(
                             id: widget.product?.id,
-                            name: _produtoName.text,
+                            name: _nameController.text,
                             amount: amount,
                             price: price,
                             validade: _produtoValidade,
@@ -190,7 +183,7 @@ class _AddProductState extends State<AddProduct> {
                           int id = await productdao.add(produto);
                           produto.id = id;
                         } else {
-                          widget.product!.name = _produtoName.text;
+                          widget.product!.name = _nameController.text;
                           widget.product!.amount = amount;
                           widget.product!.price = price;
                           widget.product!.validade = _produtoValidade;
@@ -209,9 +202,7 @@ class _AddProductState extends State<AddProduct> {
                     },
                     child: Text(
                       "salvar",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                      ),
+                      style: TextStyle(color: colorScheme.primaryContainer),
                     ),
                   ),
                 ],

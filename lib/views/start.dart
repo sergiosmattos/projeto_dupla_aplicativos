@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_dupla_aplicativos/database/session.dart';
-import 'package:projeto_dupla_aplicativos/database/userdao.dart';
-import 'package:projeto_dupla_aplicativos/modals/user.dart';
-import 'package:projeto_dupla_aplicativos/views/auth.dart';
+import 'package:projeto_dupla_aplicativos/database/user_dao.dart';
+import 'package:projeto_dupla_aplicativos/models/user.dart';
 import 'package:projeto_dupla_aplicativos/views/home_page.dart';
+import 'package:projeto_dupla_aplicativos/views/user_form_page.dart';
 
 class Start extends StatefulWidget {
   const Start({super.key});
@@ -24,10 +24,12 @@ class _StartState extends State<Start> {
   Future<void> _decidir() async {
     User? user;
     int? id = await Session.getUserId();
+
     if (id != null) {
       user = await userDao.getById(id);
+
       if (user == null) {
-        await Session.clear(); // a conta não existe mais
+        await Session.clear();
       }
     }
 
@@ -35,12 +37,15 @@ class _StartState extends State<Start> {
       return;
     }
 
-    final User? logado = user;
+    final User? usuariologado = user;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            logado == null ? const Auth() : HomePage(user: logado),
+        builder: (context) {
+          return usuariologado == null
+              ? const UserFormPage()
+              : HomePage(user: usuariologado);
+        },
       ),
     );
   }

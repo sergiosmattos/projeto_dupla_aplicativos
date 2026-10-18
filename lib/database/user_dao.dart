@@ -2,44 +2,51 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:projeto_dupla_aplicativos/database/database_helper.dart';
-import 'package:projeto_dupla_aplicativos/modals/user.dart';
+import 'package:projeto_dupla_aplicativos/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 
 class UserDao {
   UserDao();
 
-  String _hash(String senha) => sha256.convert(utf8.encode(senha)).toString();
+  String _hash(String password) =>
+      sha256.convert(utf8.encode(password)).toString();
 
-  String _limpaEmail(String email) => email.trim().toLowerCase();
+  String _formatEmail(String email) => email.trim().toLowerCase();
 
   // create: devolve o usuário criado, ou null se o e-mail já existe
-  Future<User?> create(String name, String email, String senha) async {
+  Future<User?> create(
+    String name,
+    String email,
+    String password,
+    String? profileImage,
+  ) async {
     Database db = await DatabaseHelper.instance.database;
-    String emailLimpo = _limpaEmail(email);
+    String formatedEmail = _formatEmail(email);
     var existe = await db.query(
       'users',
       where: 'email = ?',
-      whereArgs: [emailLimpo],
+      whereArgs: [formatedEmail],
     );
     if (existe.isNotEmpty) {
       return null;
     }
     User user = User(
       name: name.trim(),
-      email: emailLimpo,
-      passwordHash: _hash(senha),
+      email: formatedEmail,
+      passwordHash: _hash(password),
+      profileImage: profileImage,
     );
     user.id = await db.insert('users', user.toMap());
     return user;
   }
 
   // login: devolve o usuário se e-mail e hash batem, senão null
-  Future<User?> login(String email, String senha) async {
+  Future<User?> login(String email, String password) async {
     Database db = await DatabaseHelper.instance.database;
     var result = await db.query(
       'users',
       where: 'email = ? AND password_hash = ?',
-      whereArgs: [_limpaEmail(email), _hash(senha)],
+      whereArgs: [_formatEmail(email), _hash(password)],
     );
     return result.isNotEmpty ? User.fromMap(result.first) : null;
   }
@@ -57,22 +64,24 @@ class UserDao {
     User user,
     String name,
     String email,
-    String novaSenha,
+    String newPassword,
+    String? profileImage,
   ) async {
     Database db = await DatabaseHelper.instance.database;
-    String emailLimpo = _limpaEmail(email);
-    var existe = await db.query(
+    String formatedEmail = _formatEmail(email);
+    var exists = await db.query(
       'users',
       where: 'email = ? AND id != ?',
-      whereArgs: [emailLimpo, user.id],
+      whereArgs: [formatedEmail, user.id],
     );
-    if (existe.isNotEmpty) {
+    if (exists.isNotEmpty) {
       return false;
     }
     user.name = name.trim();
-    user.email = emailLimpo;
-    if (novaSenha.isNotEmpty) {
-      user.passwordHash = _hash(novaSenha);
+
+    user.email = formatedEmail;
+    if (newPassword.isNotEmpty) {
+      user.passwordHash = _hash(newPassword);
     }
     await db.update(
       'users',
