@@ -19,7 +19,6 @@ class _HomePageState extends State<HomePage> {
   ProductDao productdao = ProductDao();
   ListProductDao listProductDao = ListProductDao();
 
-  // apaga a sessão salva e volta para a entrada, apagando TODAS as telas anteriores
   void deleteListProduct(ListProduct listProduct) {
     setState(() {
       listProductDao.remove(listProduct);

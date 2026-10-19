@@ -22,14 +22,17 @@ class UserDao {
   ) async {
     Database db = await DatabaseHelper.instance.database;
     String formatedEmail = _formatEmail(email);
+
     var existe = await db.query(
       'users',
       where: 'email = ?',
       whereArgs: [formatedEmail],
     );
+
     if (existe.isNotEmpty) {
       return null;
     }
+
     User user = User(
       name: name.trim(),
       email: formatedEmail,
@@ -37,6 +40,7 @@ class UserDao {
       profileImage: profileImage,
     );
     user.id = await db.insert('users', user.toMap());
+
     return user;
   }
 
@@ -89,6 +93,7 @@ class UserDao {
     if (newPassword.isNotEmpty) {
       user.passwordHash = _hash(newPassword);
     }
+
     await db.update(
       'users',
       user.toMap(),

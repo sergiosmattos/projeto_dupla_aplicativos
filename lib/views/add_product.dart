@@ -20,6 +20,7 @@ class _AddProductState extends State<AddProduct> {
   final TextEditingController _validadeController = TextEditingController();
   DateTime _produtoValidade = DateTime.now();
   ProductDao productdao = ProductDao();
+  
   @override
   void initState() {
     super.initState();

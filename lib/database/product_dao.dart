@@ -5,16 +5,6 @@ import 'package:sqflite/sqflite.dart';
 class ProductDao {
   ProductDao();
 
-  // read
-  Future<List<Product>> getProduct() async {
-    Database db = await DatabaseHelper.instance.database;
-    var products = await db.query('products', orderBy: 'id DESC');
-    List<Product> productList = products.isNotEmpty
-        ? products.map((item) => Product.fromMap(item)).toList()
-        : [];
-    return productList;
-  }
-
   // create
   Future<int> add(Product newProduct) async {
     Database db = await DatabaseHelper.instance.database;
