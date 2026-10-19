@@ -20,6 +20,23 @@ class ListProductDao {
     return listProductList;
   }
 
+  Future<List<ListProduct>> getListProductByName(
+    int userId,
+    String name,
+  ) async {
+    Database db = await DatabaseHelper.instance.database;
+    var lists = await db.query(
+      'lists_product',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'name DESC id DESC',
+    );
+    List<ListProduct> listProductList = lists.isNotEmpty
+        ? lists.map((item) => ListProduct.fromMap(item)).toList()
+        : [];
+    return listProductList;
+  }
+
   // create
   Future<int> add(ListProduct newListProduct) async {
     Database db = await DatabaseHelper.instance.database;

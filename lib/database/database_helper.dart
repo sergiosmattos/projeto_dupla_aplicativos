@@ -18,18 +18,14 @@ class DatabaseHelper {
     String path = join(databasePath, _dbName);
     return openDatabase(
       path,
-      onCreate: _createDb,
       version: _version,
+      onCreate: _onCreate,
       onConfigure: _onConfig,
-      onUpgrade: (db, oldVersion, newVersion) {
-        db.execute('''
-        ALTER TABLE users ADD COLUMN profile_image TEXT
-        ''');
-      },
+      onUpgrade: _onUpgrade,
     );
   }
 
-  Future _createDb(Database db, int version) async {
+  Future _onCreate(Database db, int version) async {
     await db.execute('''
   CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,5 +61,9 @@ class DatabaseHelper {
     await db.execute('PRAGMA foreign_keys = ON');
   }
 
-  void _onUpgrade(Database db, int oldVersion, int newVersion) {}
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    await db.execute('''
+      ALTER TABLE users ADD COLUMN profile_image TEXT
+    ''');
+  }
 }

@@ -36,6 +36,7 @@ class _AddListProductState extends State<AddListProduct> {
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
+    Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
@@ -63,6 +64,7 @@ class _AddListProductState extends State<AddListProduct> {
             child: Form(
               key: _formKey,
               child: Column(
+                spacing: size.height * 0.0125,
                 children: [
                   TextFormField(
                     controller: _nameController,
@@ -129,13 +131,13 @@ class _AddListProductState extends State<AddListProduct> {
                         }
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Salvando lista")),
+                          const SnackBar(content: Text("Salvando Lista")),
                         );
                         Navigator.pop(context);
                       }
                     },
                     child: Text(
-                      "salvar lista",
+                      "Salvar Lista",
                       style: TextStyle(color: colorScheme.primaryContainer),
                     ),
                   ),
