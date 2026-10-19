@@ -69,17 +69,23 @@ class UserDao {
   ) async {
     Database db = await DatabaseHelper.instance.database;
     String formatedEmail = _formatEmail(email);
+
     var exists = await db.query(
       'users',
       where: 'email = ? AND id != ?',
       whereArgs: [formatedEmail, user.id],
     );
+
     if (exists.isNotEmpty) {
       return false;
     }
+
     user.name = name.trim();
 
     user.email = formatedEmail;
+
+    user.profileImage = profileImage;
+
     if (newPassword.isNotEmpty) {
       user.passwordHash = _hash(newPassword);
     }

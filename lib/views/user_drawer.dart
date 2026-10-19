@@ -56,6 +56,7 @@ class UserDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       child: ListView(
@@ -70,7 +71,13 @@ class UserDrawer extends StatelessWidget {
             currentAccountPicture: CircleAvatar(
               child: (user.profileImage == null)
                   ? Text(user.name[0].toUpperCase())
-                  : Image.file(File(user.profileImage!)),
+                  : ClipOval(
+                      child: SizedBox(
+                        width: size.width,
+                        height: size.height,
+                        child: Image.file(fit: .fill, File(user.profileImage!)),
+                      ),
+                    ),
             ),
           ),
           ListTile(

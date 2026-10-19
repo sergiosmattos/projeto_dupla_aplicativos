@@ -26,7 +26,7 @@ class _UserFormPageState extends State<UserFormPage> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  XFile? _selectedImage;
+  XFile? _currentImage;
 
   UserDao userDao = UserDao();
 
@@ -40,7 +40,7 @@ class _UserFormPageState extends State<UserFormPage> {
       String? userProfileImage = widget._user!.profileImage;
 
       if (userProfileImage != null) {
-        _selectedImage = XFile(userProfileImage);
+        _currentImage = XFile(userProfileImage);
       }
     }
   }
@@ -56,6 +56,7 @@ class _UserFormPageState extends State<UserFormPage> {
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
+    Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,6 +83,7 @@ class _UserFormPageState extends State<UserFormPage> {
             child: Form(
               key: _formKey,
               child: Column(
+                spacing: size.height * 0.0125,
                 children: [
                   if (widget._user != null || widget._cadastro)
                     TextFormField(
@@ -133,11 +135,11 @@ class _UserFormPageState extends State<UserFormPage> {
                       fallback: Image.asset(
                         "assets/images/${User.defaultUnknownImage}",
                       ),
-                      imageHolder: _selectedImage,
+                      imageHolder: _currentImage,
                       validator: (value) => null,
                       onTap: (pickedImage) {
                         setState(() {
-                          _selectedImage = pickedImage;
+                          _currentImage = pickedImage;
                         });
                       },
                     ),
@@ -150,26 +152,22 @@ class _UserFormPageState extends State<UserFormPage> {
                       if (_formKey.currentState!.validate()) {
                         String? savedPath;
 
-                        if (_selectedImage != null) {
-                          print("tem Imagem");
+                        if (_currentImage != null) {
                           Directory documentDir =
                               await getApplicationDocumentsDirectory();
 
-                          String savedPath = join(
+                          savedPath = join(
                             documentDir.path,
-                            _selectedImage!.name,
+                            _currentImage!.name,
                           );
 
-                          _selectedImage!.saveTo(savedPath);
-
-                          print(savedPath);
+                          _currentImage!.saveTo(savedPath);
                         }
-
-                        print(savedPath);
 
                         if (widget._user == null) {
                           // entrada ou cadastro
                           User? user;
+
                           if (widget._cadastro) {
                             user = await userDao.create(
                               _nomeController.text,
@@ -201,8 +199,7 @@ class _UserFormPageState extends State<UserFormPage> {
                             return;
                           }
 
-                          final User logado = user;
-                          await Session.save(logado.id!);
+                          await Session.saveUserId(user.id!);
 
                           if (!context.mounted) {
                             return;
@@ -211,15 +208,12 @@ class _UserFormPageState extends State<UserFormPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomePage(user: logado),
+                              builder: (context) => HomePage(user: user!),
                             ),
                           );
                         } else {
                           // alterando o usuário
-
-                          print(savedPath);
-
-                          bool salvou = await userDao.update(
+                          bool saved = await userDao.update(
                             widget._user!,
                             _nomeController.text,
                             _emailController.text,
@@ -227,17 +221,11 @@ class _UserFormPageState extends State<UserFormPage> {
                             savedPath,
                           );
 
-                          print(
-                            (widget._user!.profileImage == null)
-                                ? "Nenhuma Imagem"
-                                : widget._user!.profileImage!,
-                          );
-
                           if (!context.mounted) {
                             return;
                           }
 
-                          if (!salvou) {
+                          if (!saved) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text("Esse e-mail já está em uso"),
@@ -249,14 +237,15 @@ class _UserFormPageState extends State<UserFormPage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("Salvando usuário")),
                           );
+
                           Navigator.pop(context);
                         }
                       }
                     },
                     child: Text(
                       widget._user == null
-                          ? (widget._cadastro ? "cadastrar" : "entrar")
-                          : "salvar",
+                          ? (widget._cadastro ? "Cadastrar" : "Entrar")
+                          : "Salvar",
                       style: TextStyle(color: colorScheme.primaryContainer),
                     ),
                   ),
