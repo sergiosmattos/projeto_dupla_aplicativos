@@ -27,7 +27,7 @@ class ListProductDao {
     Database db = await DatabaseHelper.instance.database;
     var lists = await db.query(
       'lists_product',
-      where: 'user_id = ?',
+      where: 'user_id = ?, name = ',
       whereArgs: [userId],
       orderBy: 'name DESC id DESC',
     );
